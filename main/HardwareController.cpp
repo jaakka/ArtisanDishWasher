@@ -1,5 +1,6 @@
 #include "HardwareController.h"
-#include "pinout.h"
+#include "Pinout.h"
+#include "Configurations.h"
 
 HardwareController::HardwareController() : 
 _mainPowerRelay(POWERCONTROL_RELAY_PIN), 
@@ -17,7 +18,7 @@ _waterQualitySensor(QUALITY_SENSOR_PIN),
 _overHeatSensor(OVERHEAT_SENSOR_PIN)
 {
     activeErrorCode = HardwareError::None;
-    _emergencyWaterDrainActive = false;
+    _emergencyWaterDrainStartTime = 0;
 }
 
 void HardwareController::begin()
@@ -40,25 +41,31 @@ void HardwareController::begin()
 }
 
 void HardwareController::loop()
-{
+{ 
     loopHandleOverHeat();
     loopHandleWaterLeak();
 }
 
 void HardwareController::loopHandleWaterLeak()
 {
-    if(!_emergencyWaterDrainActive)
+    if(_emergencyWaterDrainStartTime == 0)
     {
-        if(_water)
+        if(_floodSensor.isDetecting())
         _drainPumpRelay.turnOn();
         HardwareController::saveMostImportantCode(HardwareError::WaterLeak);
-        _emergencyWaterDrainActive
+        _emergencyWaterDrainStartTime = millis();
+        return;
+    }
+
+    if(millis() - _emergencyWaterDrainStartTime >= DRAIN_PUMP_DELAY_IN_S)
+    {
+        _drainPumpRelay.turnOff();
     }
 }
 
 void HardwareController::loopHandleOverHeat()
 {
-    if(_overHeatSensor.notDetecting)
+    if(_overHeatSensor.notDetecting() || _waterTemperatureSensor.getTemperature() > TEMPERATURE_LIMIT)
     return;
     
     _waterHeatRelay.turnOff();
@@ -85,7 +92,7 @@ void HardwareController::startWashing()
         return;
     }
 
-    if(activeErrorCode === HardwareError::None)
+    if(activeErrorCode == HardwareError::None)
     {
         _washPumpRelay.turnOn();
     }
@@ -98,7 +105,7 @@ void HardwareController::endWashing()
 
 void HardwareController::turnOnHeater()
 {
-    if(_overHeatSensor.isDetecting())
+    if(_overHeatSensor.isDetecting() || _waterTemperatureSensor.getTemperature() > TEMPERATURE_LIMIT)
     {
         HardwareController::saveMostImportantCode(HardwareError::Overheating);
         return;
@@ -110,7 +117,7 @@ void HardwareController::turnOnHeater()
         return;
     }
 
-    if(activeErrorCode === HardwareError::None)
+    if(activeErrorCode == HardwareError::None)
     {
         _waterHeatRelay.turnOn();
     }
@@ -129,7 +136,7 @@ void HardwareController::openValve()
         return;
     }
 
-    if(activeErrorCode === HardwareError::None)
+    if(activeErrorCode == HardwareError::None)
     {
         _waterValveRelay.turnOn();
     }
@@ -170,14 +177,24 @@ bool HardwareController::doorIsOpen()
     return _doorSensor.isDetecting();
 }
 
-uint_8 HardwareController::getQualityInPercentage()
+bool HardwareController::targetQualityReached(const uint8_t minTarget)
+{
+    return _waterQualitySensor.targetQualityReached(minTarget);
+}
+
+uint8_t HardwareController::getQualityInPercentage()
 {
     return _waterQualitySensor.getQuality();
 }
 
 float HardwareController::getTemperatureInCelsius()
 {
-    
+    return _waterTemperatureSensor.getTemperature();
+}
+
+bool HardwareController::targetTemperatureReached(const uint8_t minTarget)
+{
+    return _waterTemperatureSensor.targetTemperatureReached(minTarget);
 }
 
 HardwareError HardwareController::saveMostImportantCode(const HardwareError code)

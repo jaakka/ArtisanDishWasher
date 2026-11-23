@@ -35,3 +35,8 @@ float TemperatureSensor::getTemperature()
 {
   return _temperature;
 }
+
+bool TemperatureSensor::targetTemperatureReached(const uint8_t minTarget)
+{
+  return _temperature >= minTarget;
+}

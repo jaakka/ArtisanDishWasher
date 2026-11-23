@@ -12,6 +12,7 @@ class TemperatureSensor
         void begin();
         void loop();
         float getTemperature();
+        bool targetTemperatureReached(const uint8_t minTarget);
     private:
         OneWire _oneWire;
         DallasTemperature _dallasTemperature; 

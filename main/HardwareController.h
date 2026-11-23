@@ -37,8 +37,10 @@ class HardwareController
         void endWashing();
         bool waterLevelNotOk();
         bool doorIsOpen();
-        uint_8 getQualityInPercentage();
+        bool targetQualityReached(const uint8_t minTarget);
+        uint8_t getQualityInPercentage();
         float getTemperatureInCelsius();
+        bool targetTemperatureReached(const uint8_t minTarget);
 
     private:
         Relay _mainPowerRelay;
@@ -56,7 +58,8 @@ class HardwareController
         QualitySensor _waterQualitySensor;
         void loopHandleOverHeat();
         void loopHandleWaterLeak();
-        bool _emergencyWaterDrainActive;
+        unsigned long _emergencyWaterDrainStartTime;
+        HardwareError saveMostImportantCode(const HardwareError code);
 };
 
 #endif
