@@ -1,6 +1,7 @@
 #include "WlanCommunication.h"
 
-WlanCommunication::WlanCommunication(ProgramController& programController)
+WlanCommunication::WlanCommunication(ProgramController& programController) : 
+_programController(programController)
 {
 
 }

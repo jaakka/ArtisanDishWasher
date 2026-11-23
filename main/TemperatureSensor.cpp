@@ -40,3 +40,8 @@ bool TemperatureSensor::targetTemperatureReached(const uint8_t minTarget)
 {
   return _temperature >= minTarget;
 }
+
+bool TemperatureSensor::SensorOk()
+{
+  return _temperature > MIN_VALUE_TEMP_SENSOR_ERROR && _temperature < MAX_VALUE_TEMP_SENSOR_ERROR;
+}

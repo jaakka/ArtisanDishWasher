@@ -13,8 +13,10 @@ enum class HardwareError : uint8_t
     AlreadyFilled,
     Timeout,
     NoWater,
+    TempSensorError,
+    QualitySensorError,
     Overheating,
-    WaterLeak
+    WaterLeak,
 };
 
 class HardwareController
@@ -59,7 +61,7 @@ class HardwareController
         void loopHandleOverHeat();
         void loopHandleWaterLeak();
         unsigned long _emergencyWaterDrainStartTime;
-        HardwareError saveMostImportantCode(const HardwareError code);
+        void saveMostImportantCode(const HardwareError code);
 };
 
 #endif

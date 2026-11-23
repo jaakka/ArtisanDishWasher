@@ -12,14 +12,17 @@ class QualitySensor
         uint8_t getQuality();
         bool targetQualityReached(const uint8_t minTarget);
         void calibrateCleanWater();
+        bool calibrationReady();
     private:
         uint8_t _cleanWaterQuality;
         
+        const uint8_t _pin;
         bool _calibrating = false;
         uint8_t _calibrationCount = 0;
         uint32_t _calibrationSum = 0;
         unsigned long _lastCalibrationRead = 0;
         void calibrateLoop();
+        uint16_t readRawValue();
 };
 
 #endif

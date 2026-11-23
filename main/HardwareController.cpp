@@ -44,20 +44,22 @@ void HardwareController::loop()
 { 
     loopHandleOverHeat();
     loopHandleWaterLeak();
+
+    _waterQualitySensor.loop();
+    _waterTemperatureSensor.loop();
 }
 
 void HardwareController::loopHandleWaterLeak()
 {
-    if(_emergencyWaterDrainStartTime == 0)
+    if(_emergencyWaterDrainStartTime == 0 && _floodSensor.isDetecting())
     {
-        if(_floodSensor.isDetecting())
         _drainPumpRelay.turnOn();
         HardwareController::saveMostImportantCode(HardwareError::WaterLeak);
         _emergencyWaterDrainStartTime = millis();
         return;
     }
 
-    if(millis() - _emergencyWaterDrainStartTime >= DRAIN_PUMP_DELAY_IN_S)
+    if(millis() - _emergencyWaterDrainStartTime >= (static_cast<unsigned long>(DRAIN_PUMP_DELAY_IN_S) * 1000))
     {
         _drainPumpRelay.turnOff();
     }
@@ -65,11 +67,17 @@ void HardwareController::loopHandleWaterLeak()
 
 void HardwareController::loopHandleOverHeat()
 {
-    if(_overHeatSensor.notDetecting() || _waterTemperatureSensor.getTemperature() > TEMPERATURE_LIMIT)
-    return;
-    
-    _waterHeatRelay.turnOff();
-    HardwareController::saveMostImportantCode(HardwareError::Overheating);
+    if(_overHeatSensor.isDetecting() || (_waterTemperatureSensor.getTemperature() >= TEMPERATURE_LIMIT || !_waterTemperatureSensor.SensorOk()))
+    {
+        _waterHeatRelay.turnOff();
+
+        if(_waterTemperatureSensor.SensorOk())
+        {
+            HardwareController::saveMostImportantCode(HardwareError::Overheating);
+            return;
+        }
+        HardwareController::saveMostImportantCode(HardwareError::TempSensorError);
+    }
 }
 
 
@@ -105,6 +113,12 @@ void HardwareController::endWashing()
 
 void HardwareController::turnOnHeater()
 {
+    if(!_waterTemperatureSensor.SensorOk())
+    {
+        HardwareController::saveMostImportantCode(HardwareError::TempSensorError);
+        return;
+    }
+
     if(_overHeatSensor.isDetecting() || _waterTemperatureSensor.getTemperature() > TEMPERATURE_LIMIT)
     {
         HardwareController::saveMostImportantCode(HardwareError::Overheating);
@@ -197,9 +211,9 @@ bool HardwareController::targetTemperatureReached(const uint8_t minTarget)
     return _waterTemperatureSensor.targetTemperatureReached(minTarget);
 }
 
-HardwareError HardwareController::saveMostImportantCode(const HardwareError code)
+void HardwareController::saveMostImportantCode(const HardwareError code)
 {
-    if(activeErrorCode > code)
+    if(activeErrorCode < code)
     {
         activeErrorCode = code;
     }
