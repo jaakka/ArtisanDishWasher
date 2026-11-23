@@ -43,6 +43,8 @@ class HardwareController
         uint8_t getQualityInPercentage();
         float getTemperatureInCelsius();
         bool targetTemperatureReached(const uint8_t minTarget);
+        void calibrateQualitySensorForCleanWater();
+        bool qualitySensorCalibratedOk();
 
     private:
         Relay _mainPowerRelay;

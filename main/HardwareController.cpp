@@ -218,3 +218,13 @@ void HardwareController::saveMostImportantCode(const HardwareError code)
         activeErrorCode = code;
     }
 }
+
+void HardwareController::calibrateQualitySensorForCleanWater()
+{
+    _waterQualitySensor.calibrateCleanWater();
+}
+
+bool HardwareController::qualitySensorCalibratedOk()
+{
+    _waterQualitySensor.calibrationReady();
+}
