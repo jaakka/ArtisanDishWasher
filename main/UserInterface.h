@@ -15,6 +15,9 @@ class UserInterface
         ProgramController& _programController;
         WlanCommunication& _wlanCommunication;
         HardwareController& _hardwareController;
+        // MainMenu _mainMenu;
+        // DebugMenu _debugMenu;
+
 };
 
 #endif

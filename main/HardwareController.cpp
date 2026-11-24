@@ -13,12 +13,14 @@ _waterLevelSensor(LEVEL_SENSOR_PIN),
 _floodSensor(FLOOD_SENSOR_PIN),
 _waterOverheatSensor(OVERHEAT_SENSOR_PIN),
 _doorSensor(DOOR_SENSOR_PIN), 
-_waterTemperatureSensor(TEMP_SENSOR_PIN),
+_waterTemperatureSensor(TEMP_SENSOR_PIN, 0),
 _waterQualitySensor(QUALITY_SENSOR_PIN),
-_overHeatSensor(OVERHEAT_SENSOR_PIN)
+_overHeatSensor(OVERHEAT_SENSOR_PIN),
+_userInput(ENCODER_RIGHT_PIN, ENCODER_LEFT_PIN, ENCODER_BUTTON_PIN, ENCODER_DETECT_PULSE_COUNT)
 {
     activeErrorCode = HardwareError::None;
     _emergencyWaterDrainStartTime = 0;
+    _lastAction = UserEvent::None;
 }
 
 void HardwareController::begin()
@@ -59,7 +61,7 @@ void HardwareController::loopHandleWaterLeak()
         return;
     }
 
-    if(millis() - _emergencyWaterDrainStartTime >= (static_cast<unsigned long>(DRAIN_PUMP_DELAY_IN_S) * 1000))
+    if(_emergencyWaterDrainStartTime != 0 && millis() - _emergencyWaterDrainStartTime >= (static_cast<unsigned long>(DRAIN_PUMP_DELAY_IN_S) * 1000))
     {
         _drainPumpRelay.turnOff();
     }
@@ -227,4 +229,11 @@ void HardwareController::calibrateQualitySensorForCleanWater()
 bool HardwareController::qualitySensorCalibratedOk()
 {
     _waterQualitySensor.calibrationReady();
+}
+
+UserEvent HardwareController::getUserLastAction()
+{
+    UserEvent currentAction = _lastAction;
+    _lastAction = UserEvent::None;
+    return currentAction;
 }

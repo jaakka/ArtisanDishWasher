@@ -3,8 +3,10 @@
 
 #include "Relay.h"
 #include "Sensor.h"
+#include "SensorWithState.h"
 #include "TemperatureSensor.h"
 #include "QualitySensor.h"
+#include "Encoder.h"
 
 enum class HardwareError : uint8_t
 {
@@ -17,6 +19,16 @@ enum class HardwareError : uint8_t
     QualitySensorError,
     Overheating,
     WaterLeak,
+};
+
+enum class UserEvent : uint8_t
+{
+    None,
+    UserOpenDoor,
+    UserCloseDoor,
+    UserScrollLeft,
+    UserScrollRight,
+    UserPressButton
 };
 
 class HardwareController
@@ -45,6 +57,7 @@ class HardwareController
         bool targetTemperatureReached(const uint8_t minTarget);
         void calibrateQualitySensorForCleanWater();
         bool qualitySensorCalibratedOk();
+        UserEvent getUserLastAction();
 
     private:
         Relay _mainPowerRelay;
@@ -56,14 +69,16 @@ class HardwareController
         Sensor _waterLevelSensor;
         Sensor _floodSensor;
         Sensor _waterOverheatSensor;
-        Sensor _doorSensor;
         Sensor _overHeatSensor;
+        SensorWithState _doorSensor;
+        Encoder _userInput;
         TemperatureSensor _waterTemperatureSensor;
         QualitySensor _waterQualitySensor;
         void loopHandleOverHeat();
         void loopHandleWaterLeak();
         unsigned long _emergencyWaterDrainStartTime;
         void saveMostImportantCode(const HardwareError code);
+        UserEvent _lastAction;
 };
 
 #endif

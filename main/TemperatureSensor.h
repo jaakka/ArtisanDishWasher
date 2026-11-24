@@ -15,6 +15,7 @@ class TemperatureSensor
         bool targetTemperatureReached(const uint8_t minTarget);
         bool SensorOk();
     private:
+        const uint8_t _sensorIndex;
         OneWire _oneWire;
         DallasTemperature _dallasTemperature; 
         unsigned long _requestTime = 0;

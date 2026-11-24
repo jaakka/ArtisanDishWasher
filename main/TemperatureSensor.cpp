@@ -1,9 +1,10 @@
 #include "TemperatureSensor.h"
 #include "Configurations.h"
 
-TemperatureSensor::TemperatureSensor(const uint8_t pin) : 
+TemperatureSensor::TemperatureSensor(const uint8_t pin, const uint8_t sensorIndex) : 
 _oneWire(pin),
-_dallasTemperature(&_oneWire) 
+_dallasTemperature(&_oneWire),
+_sensorIndex(sensorIndex)
 {
 
 }
@@ -26,7 +27,7 @@ void TemperatureSensor::loop()
 
   if (_measuring && millis() - _requestTime >= TEMPERATURE_MEASURE_TIME)
   {
-    _temperature = _dallasTemperature.getTempCByIndex(0);
+    _temperature = _dallasTemperature.getTempCByIndex(_sensorIndex);
     _measuring = false;
   }
 }
