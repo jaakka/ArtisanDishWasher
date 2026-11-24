@@ -45,12 +45,14 @@ void HardwareController::begin()
 
 void HardwareController::loop()
 { 
-    HardwareController::loopHandleOverHeat();
-    HardwareController::loopHandleWaterLeak();
-    HardwareController::loopHandleEmergencyPowerOff();
     _userInput.loop();
     _waterQualitySensor.loop();
     _waterTemperatureSensor.loop();
+
+    HardwareController::loopHandleOverHeat();
+    HardwareController::loopHandleWaterLeak();
+    HardwareController::loopHandleEmergencyPowerOff();
+    HardwareController::loopHandleUserActions();
 }
 
 void HardwareController::loopHandleEmergencyPowerOff()
@@ -246,4 +248,37 @@ UserEvent HardwareController::getUserLastAction()
     UserEvent currentAction = _lastAction;
     _lastAction = UserEvent::None;
     return currentAction;
+}
+
+void HardwareController::loopHandleUserActions()
+{
+    if(_userInput.userScrollLeft())
+    {
+        _lastAction = UserEvent::UserScrollLeft;
+    }
+    if(_userInput.userScrollRight())
+    {
+        _lastAction = UserEvent::UserScrollRight;
+    }
+    if(_userInput.userPressButton())
+    {
+        _lastAction = UserEvent::UserPressButton;
+    }
+    if(_userInput.userLongPressButton())
+    {
+        _lastAction = UserEvent::UserLongPressButton;
+    }
+
+    // Door overide
+    if(_doorSensor.changeDetected())
+    {
+        if(_doorSensor.isDetecting())
+        {
+            _lastAction = UserEvent::UserOpenDoor;
+        }
+        if(_doorSensor.notDetecting())
+        {
+            _lastAction = UserEvent::UserCloseDoor;
+        }
+    }
 }

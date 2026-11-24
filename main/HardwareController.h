@@ -28,7 +28,8 @@ enum class UserEvent : uint8_t
     UserCloseDoor,
     UserScrollLeft,
     UserScrollRight,
-    UserPressButton
+    UserPressButton,
+    UserLongPressButton
 };
 
 class HardwareController
@@ -77,6 +78,7 @@ class HardwareController
         void loopHandleOverHeat();
         void loopHandleWaterLeak();
         void loopHandleEmergencyPowerOff();
+        void loopHandleUserActions();
         unsigned long _emergencyWaterDrainStartTime;
         void saveMostImportantCode(const HardwareError code);
         UserEvent _lastAction;
