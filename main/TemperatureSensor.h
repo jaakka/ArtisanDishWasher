@@ -8,7 +8,7 @@
 class TemperatureSensor
 { 
     public:
-        TemperatureSensor(const uint8_t pin);
+        TemperatureSensor(const uint8_t pin, const uint8_t sensorIndex);
         void begin();
         void loop();
         float getTemperature();

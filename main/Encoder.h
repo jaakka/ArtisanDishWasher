@@ -13,6 +13,7 @@ class Encoder
         bool userScrollRight();
         bool userPressButton();
         bool userLongPressButton();
+        bool userVeryLongButton();
         
     private:
         const uint8_t _rightPin;
@@ -20,6 +21,15 @@ class Encoder
         const uint8_t _pressPin;
         const uint8_t _detectStepCount;
         unsigned long _userPressStartTime;
+        uint8_t _oldState;
+        int16_t _rotationCount;
+        bool _shortPressWaiting;
+        bool _longPressWaiting;
+        bool buttonPressed();
+        uint8_t readEncoder();
+        void buttonLoop();
+        void encoderLoop();
+        void handleRotationDirection(const uint8_t oldAndNewState);
 };
 
 #endif

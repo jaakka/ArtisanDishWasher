@@ -76,6 +76,7 @@ class HardwareController
         QualitySensor _waterQualitySensor;
         void loopHandleOverHeat();
         void loopHandleWaterLeak();
+        void loopHandleEmergencyPowerOff();
         unsigned long _emergencyWaterDrainStartTime;
         void saveMostImportantCode(const HardwareError code);
         UserEvent _lastAction;

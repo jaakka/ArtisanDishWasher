@@ -38,17 +38,27 @@ void HardwareController::begin()
     _waterTemperatureSensor.begin();
     _waterQualitySensor.begin();
     _overHeatSensor.begin();
+    _userInput.begin();
 
     _mainPowerRelay.turnOn();
 }
 
 void HardwareController::loop()
 { 
-    loopHandleOverHeat();
-    loopHandleWaterLeak();
-
+    HardwareController::loopHandleOverHeat();
+    HardwareController::loopHandleWaterLeak();
+    HardwareController::loopHandleEmergencyPowerOff();
+    _userInput.loop();
     _waterQualitySensor.loop();
     _waterTemperatureSensor.loop();
+}
+
+void HardwareController::loopHandleEmergencyPowerOff()
+{
+    if(_userInput.userVeryLongButton())
+    {
+        _mainPowerRelay.turnOff();
+    }
 }
 
 void HardwareController::loopHandleWaterLeak()
