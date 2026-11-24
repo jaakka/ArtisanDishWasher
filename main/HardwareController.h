@@ -7,6 +7,7 @@
 #include "TemperatureSensor.h"
 #include "QualitySensor.h"
 #include "Encoder.h"
+#include <SoftwareSerial.h>
 
 enum class HardwareError : uint8_t
 {
@@ -59,6 +60,7 @@ class HardwareController
         void calibrateQualitySensorForCleanWater();
         bool qualitySensorCalibratedOk();
         UserEvent getUserLastAction();
+        void sendLcdCommand(const char* command);
 
     private:
         Relay _mainPowerRelay;
@@ -82,6 +84,9 @@ class HardwareController
         unsigned long _emergencyWaterDrainStartTime;
         void saveMostImportantCode(const HardwareError code);
         UserEvent _lastAction;
+        SoftwareSerial _lcdSerial;
+        SoftwareSerial _wlanSerial;
+        void beginSerialCommunications();
 };
 
 #endif

@@ -30,6 +30,7 @@
 #define WLAN_TX 11
 
 // LCD-näyttö
+#define LCD_RX 10 // this can be same than wlan because lcd not use
 #define LCD_TX 8
 
 #endif

@@ -16,7 +16,9 @@ _doorSensor(DOOR_SENSOR_PIN),
 _waterTemperatureSensor(TEMP_SENSOR_PIN, 0),
 _waterQualitySensor(QUALITY_SENSOR_PIN),
 _overHeatSensor(OVERHEAT_SENSOR_PIN),
-_userInput(ENCODER_RIGHT_PIN, ENCODER_LEFT_PIN, ENCODER_BUTTON_PIN, ENCODER_DETECT_PULSE_COUNT)
+_userInput(ENCODER_RIGHT_PIN, ENCODER_LEFT_PIN, ENCODER_BUTTON_PIN, ENCODER_DETECT_PULSE_COUNT),
+_lcdSerial(LCD_RX, LCD_TX),
+_wlanSerial(WLAN_RX, WLAN_TX)
 {
     activeErrorCode = HardwareError::None;
     _emergencyWaterDrainStartTime = 0;
@@ -41,6 +43,26 @@ void HardwareController::begin()
     _userInput.begin();
 
     _mainPowerRelay.turnOn();
+    beginSerialCommunications();
+}
+
+void HardwareController::beginSerialCommunications()
+{
+    _lcdSerial.begin(9600);
+    // HardwareController::sendLcdCommand("baud=115200");
+    // _lcdSerial.begin(115200);
+    HardwareController::sendLcdCommand("t1.txt=\"TOIMII\"");
+
+    _wlanSerial.begin(19200);
+    
+}
+
+void HardwareController::sendLcdCommand(const char* cmd)
+{
+  _lcdSerial.print(cmd);
+  _lcdSerial.write(0xFF);
+  _lcdSerial.write(0xFF);
+  _lcdSerial.write(0xFF);
 }
 
 void HardwareController::loop()
