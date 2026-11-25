@@ -51,10 +51,8 @@ void HardwareController::beginSerialCommunications()
     _lcdSerial.begin(9600);
     // HardwareController::sendLcdCommand("baud=115200");
     // _lcdSerial.begin(115200);
-    HardwareController::sendLcdCommand("t1.txt=\"TOIMII\"");
-
+    //HardwareController::sendLcdCommand("t1.txt=\"TOIMII\"");
     _wlanSerial.begin(19200);
-    
 }
 
 void HardwareController::sendLcdCommand(const char* cmd)

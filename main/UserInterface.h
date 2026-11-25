@@ -4,6 +4,7 @@
 #include "ProgramController.h"
 #include "WlanCommunication.h"
 #include "HardwareController.h"
+#include "Graphics.h"
 
 class UserInterface
 { 
@@ -15,6 +16,7 @@ class UserInterface
         ProgramController& _programController;
         WlanCommunication& _wlanCommunication;
         HardwareController& _hardwareController;
+        Graphics _graphics;
         // MainMenu _mainMenu;
         // DebugMenu _debugMenu;
 
