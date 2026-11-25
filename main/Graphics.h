@@ -15,6 +15,7 @@ class Graphics
         Graphics(HardwareController& hardwareController);
         void begin();
         void loop();
+        void drawText(const char* text, TextLine line);
     private:
         HardwareController& _hardwareController;
 };
