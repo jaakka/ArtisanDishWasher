@@ -43,3 +43,28 @@ void Graphics::drawText(const char* text, TextLine line)
 
     // Working example cmd "t0.txt=\"123456789\""
 }
+
+// Pitää tehdä tuki monille kuville
+void Graphics::drawImage(uint8_t elementId, uint8_t imageId)
+{
+    char cmd[15] = "p0.pic=";
+
+    cmd[1] = '0' + elementId;
+
+    uint8_t position = 7;
+
+    if (imageId >= 100)
+    {
+        cmd[position++] = '0' + imageId / 100;
+    }
+
+    if (imageId >= 10)
+    {
+        cmd[position++] = '0' + (imageId / 10) % 10;
+    }
+
+    cmd[position++] = '0' + imageId % 10;
+    cmd[position] = '\0';
+
+    _hardwareController.sendLcdCommand(cmd);
+}
