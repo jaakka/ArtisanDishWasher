@@ -8,7 +8,11 @@ enum class TextPosition {
     CENTER_BOTTOM = 1
 };
 
-enum class SmallIconPositionRightTop {
+enum class LargeIconPosition : uint8_t{
+    CENTER = 1
+};
+
+enum class SmallIconPositionRightTop : uint8_t{
     // Right top circle icons
     ONE = 14,
     TWO_1 = 15,
@@ -22,7 +26,7 @@ enum class SmallIconPositionRightTop {
     FOUR_4 = 22
 };
 
-enum class SmallIconPositionRightBottom {
+enum class SmallIconPositionRightBottom : uint8_t{
     // Right bottom circle icons
     ONE = 23,
     TWO_1 = 25,
@@ -36,7 +40,7 @@ enum class SmallIconPositionRightBottom {
     FOUR_4 = 31
 };
 
-enum class SmallIconPositionLeftBottom {
+enum class SmallIconPositionLeftBottom : uint8_t{
     // Left bottom circle icons
     ONE = 32,
     TWO_1 = 33,
@@ -50,7 +54,7 @@ enum class SmallIconPositionLeftBottom {
     FOUR_4 = 40
 };
 
-enum class SmallIconPositionLeftTop {
+enum class SmallIconPositionLeftTop : uint8_t{
     // Left top circle icons
     ONE = 0,
     TWO_1 = 7,
@@ -65,7 +69,7 @@ enum class SmallIconPositionLeftTop {
 };
 
 // Background image positions
-enum class BgImagePosition {
+enum class BgImagePosition : uint8_t{
     RIGHT_TOP = 5,
     RIGHT_BOTTOM = 4,
     LEFT_BOTTOM = 3,
@@ -73,7 +77,7 @@ enum class BgImagePosition {
 };
 
 // Background images
-enum class BgImageRightTop {
+enum class BgImageRightTop : uint8_t{
     // Circle right top
     EMPTY = 62,
     ONE = 60,
@@ -92,7 +96,7 @@ enum class BgImageRightTop {
     FOUR_4_SELECTED = 59
 };
 
-enum class BgImageRightBottom {
+enum class BgImageRightBottom : uint8_t{
     // Circle right bottom
     EMPTY = 63,
     ONE = 46,
@@ -111,7 +115,7 @@ enum class BgImageRightBottom {
     FOUR_4_SELECTED = 45
 };
 
-enum class BgImageLeftBottom {
+enum class BgImageLeftBottom : uint8_t{
     // Circle left bottom
     EMPTY = 64,
     ONE = 32,
@@ -130,7 +134,7 @@ enum class BgImageLeftBottom {
     FOUR_4_SELECTED = 31
 };
 
-enum class BgImageLeftTop {
+enum class BgImageLeftTop : uint8_t{
     // Circle left top
     EMPTY = 65,
     ONE = 18,
@@ -149,7 +153,7 @@ enum class BgImageLeftTop {
     FOUR_4_SELECTED = 17
 };
 
-enum class LargeIcon {
+enum class LargeIcon : uint8_t{
     WATER = 0,
     FIRE = 1,
     SOAP = 2,
@@ -165,7 +169,7 @@ enum class LargeIcon {
     LEAF = 96
 };
 
-enum class SmallIcon {
+enum class SmallIcon : uint8_t {
     NONE = 0,
     FIRE = 66,
     PAUSE = 67,
@@ -182,7 +186,7 @@ enum class SmallIcon {
     LEAF = 97
 };
 
-enum class SmallIconSelected {
+enum class SmallIconSelected : uint8_t {
     NONE = 0,
     FIRE = 91,
     PAUSE = 73,
@@ -205,7 +209,11 @@ class Graphics
         Graphics(HardwareController& hardwareController);
         void begin();
         void loop();
-        void drawText(const char* text, TextLine line);
+        void drawText(const char* text, TextPosition line);
+        void drawImage(uint8_t elementId, uint8_t imageId);
+        void drawBackground(BgImageRightTop rightTopBg, BgImageRightBottom rightBottomBg, BgImageLeftBottom leftBottomBg, BgImageLeftTop leftTopBg);
+        void updateActionInfo(LargeIcon icon, const char* info);
+
     private:
         HardwareController& _hardwareController;
 };

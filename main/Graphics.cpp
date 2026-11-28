@@ -8,8 +8,8 @@ _hardwareController(hardwareController)
 
 void Graphics::begin()
 {
-    Graphics::drawText("TalvLabs", TextLine::TopText);
-    Graphics::drawText("", TextLine::BottomText);
+
+    Graphics::updateActionInfo(LargeIcon::HOME, "Tervetuloa!");
 }
 
 void Graphics::loop()
@@ -17,7 +17,7 @@ void Graphics::loop()
     
 }
 
-void Graphics::drawText(const char* text, TextLine line)
+void Graphics::drawText(const char* text, TextPosition line)
 {
     char cmd[30] = "t0.txt=\""; 
     cmd[1] = '0' + static_cast<uint8_t>(line); // Change line id
@@ -44,14 +44,31 @@ void Graphics::drawText(const char* text, TextLine line)
     // Working example cmd "t0.txt=\"123456789\""
 }
 
-// Pitää tehdä tuki monille kuville
+
 void Graphics::drawImage(uint8_t elementId, uint8_t imageId)
 {
-    char cmd[15] = "p0.pic=";
+    char cmd[15];
+    uint8_t position = 0;
 
-    cmd[1] = '0' + elementId;
+    cmd[position++] = 'p';
 
-    uint8_t position = 7;
+    if (elementId >= 100)
+    {
+        cmd[position++] = '0' + elementId / 100;
+    }
+
+    if (elementId >= 10)
+    {
+        cmd[position++] = '0' + (elementId / 10) % 10;
+    }
+
+    cmd[position++] = '0' + elementId % 10;
+
+    cmd[position++] = '.';
+    cmd[position++] = 'p';
+    cmd[position++] = 'i';
+    cmd[position++] = 'c';
+    cmd[position++] = '=';
 
     if (imageId >= 100)
     {
@@ -67,4 +84,20 @@ void Graphics::drawImage(uint8_t elementId, uint8_t imageId)
     cmd[position] = '\0';
 
     _hardwareController.sendLcdCommand(cmd);
+}
+
+
+void Graphics::drawBackground(BgImageRightTop rightTopBg, BgImageRightBottom rightBottomBg, BgImageLeftBottom leftBottomBg, BgImageLeftTop leftTopBg)
+{
+    Graphics::drawImage(static_cast<uint8_t>(BgImagePosition::RIGHT_TOP), static_cast<uint8_t>(rightTopBg));
+    Graphics::drawImage(static_cast<uint8_t>(BgImagePosition::RIGHT_BOTTOM), static_cast<uint8_t>(rightBottomBg));
+    Graphics::drawImage(static_cast<uint8_t>(BgImagePosition::LEFT_BOTTOM), static_cast<uint8_t>(leftBottomBg));
+    Graphics::drawImage(static_cast<uint8_t>(BgImagePosition::LEFT_TOP), static_cast<uint8_t>(leftTopBg));
+}
+
+void Graphics::updateActionInfo(LargeIcon icon, const char* info)
+{
+    Graphics::drawBackground(BgImageRightTop::EMPTY, BgImageRightBottom::EMPTY, BgImageLeftBottom::EMPTY, BgImageLeftTop::EMPTY);
+    Graphics::drawImage(static_cast<uint8_t>(LargeIconPosition::CENTER),static_cast<uint8_t>(icon));
+    Graphics::drawText(info, TextPosition::CENTER_TOP);
 }
